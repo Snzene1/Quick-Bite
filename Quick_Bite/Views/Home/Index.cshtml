@@ -1,0 +1,260 @@
+﻿@model Quick_Bite.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "QuickBite - Delicious Recipes";
+}
+
+<div class="home-container">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to <span class="brand-name">QuickBite</span></h1>
+            <p class="hero-subtitle">Discover and share delicious recipes from around the world</p>
+            <div class="hero-buttons">
+                <a asp-controller="Recipe" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="fas fa-utensils me-2"></i>Explore Recipes
+                </a>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg ms-3">
+                        <i class="fas fa-user-plus me-2"></i>Join Now
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose QuickBite?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Quick Recipes</h3>
+                        <p>Find meals you can prepare in 30 minutes or less, perfect for busy weeknights.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>Download Favorites</h3>
+                        <p>Download your favorite recipes and access them anytime from your profile.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Complete Meals</h3>
+                        <p>Discover perfect pairings with our recipes, drinks, and side dish suggestions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trending-section">
+        <div class="container">
+            <h2 class="section-title">Popular This Week</h2>
+            <div class="row g-4">
+                @foreach (var recipe in Model.PopularRecipes)
+                {
+                    <div class="col-md-4">
+                        <a asp-controller="Recipe" asp-action="Details" asp-route-id="@recipe.Id" class="recipe-link">
+                            <div class="recipe-card">
+                                <!-- Updated image reference -->
+                                <div class="recipe-image"
+                                     style="background-image: url('/images/recipes/@(recipe.ImageUrl ?? "default.jpg")')"></div>
+                                <div class="recipe-content">
+                                    <h3>@recipe.RecipeName</h3>
+                                    <div class="recipe-meta">
+                                        <span><i class="fas fa-clock"></i> @(recipe.PrepTime + recipe.CookTime) mins</span>
+                                        <span><i class="fas fa-utensils"></i> @recipe.MealCategory</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Styles {
+    <style>
+        .home-container {
+            padding: 0;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 8rem 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .brand-name {
+            color: var(--tomato);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 5rem 0;
+            background-color: var(--cream);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--eggplant);
+            font-weight: 700;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--tomato);
+            margin: 1rem auto;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            height: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--tomato);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            color: var(--basil);
+            margin-bottom: 1rem;
+        }
+
+        /* Trending Section */
+        .trending-section {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-content h3 {
+            color: var(--eggplant);
+            margin-bottom: 1rem;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .recipe-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+            .recipe-link:hover {
+                text-decoration: none;
+            }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-buttons a {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .hero-buttons a:last-child {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+}

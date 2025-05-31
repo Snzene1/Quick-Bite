@@ -1,0 +1,184 @@
+﻿Add-Migration -Context ApplicationDbContext -OutputDir Data\QOMigrations Initial
+Update-Database -Context ApplicationDbContext 
+
+Add-Migration -Context QuickContext -o Data\QOMigrations Initial
+Update-Database -Context QuickContext 
+
+
+
+
+
+
+using GymManagement.Data;
+using GymManagement.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace GymManagement.Controllers
+{
+    public class ClientController : Controller
+    {
+        private readonly GymContext _context;
+        public ClientController(GymContext context) 
+        {
+            _context = context; 
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            // Exclude sensitive fields like DOB and HealthCondition from the index view
+            var Clients = await _context.Clients
+                .Select(c => new { c.FirstName, c.LastName, c.Email, c.Phone, c.ID }) // Only show non-sensitive data
+                .ToListAsync();
+            return View(Clients);
+        }
+
+        public async Task<IActionResult> Details(int? id) 
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var client = await _context.Clients.FindAsync(id);
+                if (client == null)
+                {
+                    return NotFound();
+                }
+
+                return View(client);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception
+                ModelState.AddModelError(string.Empty, "Unable to load details. Try again later.");
+                return View();
+            }
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+        // POST: Client/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,Phone")] Client client)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.Add(client);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                ModelState.AddModelError("", "Unable to save changes. Try again later.");
+            }
+
+            return View(client);
+        }
+
+        // GET: Client/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return View(client);
+        }
+
+        // POST: Client/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var clientToUpdate = await _context.Clients.FindAsync(id);
+            if (clientToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                if (await TryUpdateModelAsync<Client>(
+                    clientToUpdate,
+                    "",
+                    c => c.FirstName, c => c.LastName, c => c.Email, c => c.Phone)) // Only update non-sensitive data
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                ModelState.AddModelError("", "Unable to save changes. Try again later.");
+            }
+
+            return View(clientToUpdate);
+        }
+
+        // GET: Client/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var client = await _context.Clients
+                    .FirstOrDefaultAsync(m => m.ID == id);
+                if (client == null)
+                {
+                    return NotFound();
+                }
+
+                return View(client);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception
+                ModelState.AddModelError(string.Empty, "Unable to load details. Try again later.");
+                return View();
+            }
+        }
+
+        // POST: Client/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var client = await _context.Clients.FindAsync(id);
+                _context.Clients.Remove(client);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                ModelState.AddModelError("", "Unable to delete. Try again later.");
+                return View();
+            }
+        }
+
+    }
+}

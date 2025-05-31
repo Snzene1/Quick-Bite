@@ -1,0 +1,156 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <!-- User is logged in -->
+    <div class="user-dropdown">
+        <a href="#" class="dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://ui-avatars.com/api/?name=@User.Identity?.Name&background=var(--tomato)&color=white"
+                 alt="Profile"
+                 class="user-avatar">
+            <span class="d-none d-md-inline">@User.Identity?.Name</span>
+            <i class="fas fa-chevron-down ms-1 small"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+            <li>
+                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                    <i class="fas fa-user-cog me-2"></i> Profile
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Email">
+                    <i class="fas fa-envelope me-2"></i> Email
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">
+                    <i class="fas fa-key me-2"></i> Password
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")">
+                    <button type="submit" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <!-- User is not logged in -->
+    <div class="auth-buttons">
+        <a class="btn btn-outline-primary" asp-area="Identity" asp-page="/Account/Login">
+            <i class="fas fa-sign-in-alt me-1"></i> Login
+        </a>
+        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">
+            <i class="fas fa-user-plus me-1"></i> Register
+        </a>
+    </div>
+}
+
+@section Styles {
+<style>
+    /* User dropdown styles */
+    .user-dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--eggplant);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+    }
+
+        .dropdown-toggle:hover {
+            background-color: rgba(255, 99, 71, 0.1);
+        }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--cream);
+    }
+
+    .dropdown-menu {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        min-width: 200px;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        color: var(--eggplant);
+        transition: all 0.3s ease;
+    }
+
+        .dropdown-item:hover {
+            background-color: rgba(255, 99, 71, 0.1);
+            color: var(--tomato);
+        }
+
+    .dropdown-divider {
+        border-color: rgba(0,0,0,0.05);
+    }
+
+    /* Auth buttons */
+    .auth-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-outline-primary {
+        color: var(--tomato);
+        border-color: var(--tomato);
+    }
+
+        .btn-outline-primary:hover {
+            background-color: rgba(255, 99, 71, 0.1);
+        }
+
+    .btn-primary {
+        background-color: var(--tomato);
+        border-color: var(--tomato);
+    }
+
+        .btn-primary:hover {
+            background-color: #e5533d;
+            border-color: #e5533d;
+        }
+
+    /* Mobile adjustments */
+    @@media (max-width: 767.98px) {
+        .auth-buttons {
+            gap: 0.5rem;
+        }
+
+            .auth-buttons .btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.875rem;
+            }
+
+        .dropdown-toggle {
+            padding: 0.4rem 0.8rem;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+        }
+    }
+</style>
+}

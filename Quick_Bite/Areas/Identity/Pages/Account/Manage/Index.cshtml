@@ -1,0 +1,227 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<div class="profile-container">
+    <div class="profile-card">
+        <!-- Profile Header with Collapse Toggle -->
+        <div class="profile-header d-flex justify-content-between align-items-start">
+            <div class="d-flex flex-column align-items-center w-100">
+                <div class="profile-avatar">
+                    <img src="https://ui-avatars.com/api/?name=@User.Identity?.Name&background=var(--tomato)&color=white&size=150"
+                         alt="Profile"
+                         class="avatar-img">
+                </div>
+                <div class="d-flex justify-content-between w-100 align-items-center mt-3">
+                    <h3 class="profile-title mb-0">@User.Identity?.Name's Profile</h3>
+                    <button class="btn btn-sm btn-toggle-profile" id="profileToggle" aria-label="Toggle profile form">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <partial name="_StatusMessage" for="StatusMessage" />
+
+        <!-- Collapsible Profile Form -->
+        <div id="profileFormContainer">
+            <form id="profile-form" method="post" class="profile-form">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-group">
+                    <label asp-for="Username" class="form-label">Username</label>
+                    <input asp-for="Username" class="form-control" placeholder="Your username" disabled />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Input.PhoneNumber" class="form-label">Phone Number</label>
+                    <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Enter your phone number" />
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                </div>
+
+                <button id="update-profile-button" type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+        background-color: var(--cream);
+        transition: all 0.3s ease;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .profile-header {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .profile-avatar {
+        margin: 0 auto 1rem;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 5px solid var(--cream);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .profile-title {
+        color: var(--eggplant);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Profile Toggle Button */
+    .btn-toggle-profile {
+        background-color: var(--tomato);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+        .btn-toggle-profile:hover {
+            background-color: #e5533d;
+            transform: scale(1.05);
+        }
+
+    /* Collapsible Form */
+    #profileFormContainer {
+        transition: all 0.3s ease;
+        overflow: hidden;
+        max-height: 500px; /* Adjust based on your form height */
+    }
+
+        #profileFormContainer.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+    .profile-form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding-top: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--eggplant);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: var(--tomato);
+            box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.25);
+        }
+
+        .form-control[disabled] {
+            background-color: #f8f9fa;
+            opacity: 1;
+        }
+
+    .btn-primary {
+        background-color: var(--tomato);
+        border-color: var(--tomato);
+        font-weight: 600;
+        margin-top: 1rem;
+        padding: 0.5rem 1.5rem;
+    }
+
+        .btn-primary:hover {
+            background-color: #e5533d;
+            border-color: #e5533d;
+        }
+
+    @@media (max-width: 768px) {
+        .profile-container {
+            padding: 1rem;
+        }
+
+        .profile-card {
+            padding: 1.5rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-title {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileToggle = document.getElementById('profileToggle');
+            const profileForm = document.getElementById('profileFormContainer');
+            const chevronIcon = profileToggle.querySelector('i');
+
+            // Check localStorage for saved state
+            const isCollapsed = localStorage.getItem('profileFormCollapsed') === 'true';
+            if (isCollapsed) {
+                profileForm.classList.add('collapsed');
+                chevronIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+
+            // Toggle profile form
+            profileToggle.addEventListener('click', function() {
+                profileForm.classList.toggle('collapsed');
+
+                if (profileForm.classList.contains('collapsed')) {
+                    chevronIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    localStorage.setItem('profileFormCollapsed', 'true');
+                } else {
+                    chevronIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    localStorage.setItem('profileFormCollapsed', 'false');
+                }
+            });
+        });
+    </script>
+}

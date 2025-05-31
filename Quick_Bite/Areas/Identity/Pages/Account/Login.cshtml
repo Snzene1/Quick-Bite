@@ -1,0 +1,192 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Welcome Back";
+}
+
+
+
+
+<div class="auth-container">
+    <div class="auth-card">
+        <!-- Left Side - Login Form -->
+        <div class="auth-form-section">
+            <div class="auth-header">
+                <h2>Sign In</h2>
+                <p class="text-muted">Access your QuickBite account</p>
+            </div>
+
+            <form id="account" method="post" class="auth-form">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="form-label">Email Address</label>
+                    <input asp-for="Input.Email" class="form-control"
+                           autocomplete="username"
+                           placeholder="Enter your email" />
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <input asp-for="Input.Password" class="form-control"
+                           autocomplete="current-password"
+                           placeholder="••••••••" />
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        <label class="form-check-label" asp-for="Input.RememberMe">
+                            Remember me
+                        </label>
+                    </div>
+                    <a class="text-primary small" id="forgot-password" asp-page="./ForgotPassword">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <!-- Submit Button -->
+                <button id="login-submit" type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span class="divider-text">or</span>
+                </div>
+
+                <!-- Social Login (if configured) -->
+                @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div class="social-login">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn btn-outline-primary social-btn"
+                                        name="provider" value="@provider.Name"
+                                        title="Log in using @provider.DisplayName">
+                                    <i class="fab fa-@provider.Name.ToLower() me-2"></i> @provider.DisplayName
+                                </button>
+                            }
+                        </div>
+                    </form>
+                }
+
+                <!-- Register Link -->
+                <div class="text-center mt-4">
+                    <span class="text-muted">Don't have an account?</span>
+                    <a class="text-primary ms-2" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
+                        Create one
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Side - Branding/Image -->
+        <div class="auth-brand-section" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+            <div class="brand-content">
+                <img src="/images/recipes/quickbite-logo.jpg" alt="QuickBite Logo" class="brand-logo">
+                <h3>Delicious Recipes Await</h3>
+                <p class="text-color">Sign in to access your saved recipes and cooking history</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .text-color{
+            color: azure;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            /* Remove margin-top adjustment */
+        }
+
+        .auth-card {
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .auth-form-section {
+            padding: 3rem;
+            flex: 1;
+        }
+
+        .auth-brand-section {
+            flex: 1;
+            /* Remove the gradient background */
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .brand-logo {
+            max-width: 150px;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .divider-text {
+            padding: 0 1rem;
+            color: #6c757d;
+        }
+
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

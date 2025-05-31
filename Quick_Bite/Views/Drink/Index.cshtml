@@ -1,0 +1,177 @@
+﻿@model IEnumerable<Quick_Bite.Models.Drink>
+
+@{
+    ViewData["Title"] = "Drinks Menu";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 fw-bold" style="color: var(--eggplant);">
+            <i class="fas fa-glass-martini-alt me-2"></i>@ViewData["Title"]
+        </h1>
+        <a asp-action="Create" class="btn btn-success btn-lg">
+            <i class="fas fa-plus-circle me-1"></i>Add New Drink
+        </a>
+    </div>
+
+    <!-- Search and Filter Card -->
+    <div class="card mb-4 border-0 shadow">
+        <div class="card-header" style="background: linear-gradient(135deg, var(--basil), var(--olive)); color: white;">
+            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Drinks</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Index" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                            <input type="text" name="searchString" value="@Context.Request.Query["searchString"]"
+                                   class="form-control" placeholder="Search drinks..." />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="drinkType" class="form-select" asp-items="Html.GetEnumSelectList<Drink.DrinkType>()">
+                            <option value="">All Drink Types</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="isAlcoholic" class="form-select">
+                            <option value="">All Drinks</option>
+                            <option value="true">Alcoholic Only</option>
+                            <option value="false">Non-Alcoholic Only</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex">
+                        <button type="submit" class="btn btn-primary flex-grow-1 me-2">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-sync-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Drinks Cards Grid -->
+    @if (Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center"
+                             style="background-color: @(item.IsAlcoholic ? "var(--eggplant)" : "var(--basil)"); color: white;">
+                            <h5 class="mb-0">@item.RecipeName</h5>
+                            <span class="badge @(item.IsAlcoholic ? "bg-warning text-dark" : "bg-light text-dark")">
+                                @(item.IsAlcoholic ? "🍺 Alcoholic" : "🚫 Non-Alc")
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="badge rounded-pill" style="background-color: var(--olive);">
+                                    <i class="fas fa-tag me-1"></i>@item.DrinkCategory
+                                </span>
+                                <span class="badge rounded-pill @GetTemperatureBadgeClass(item.ServingTemperature)">
+                                    <i class="@GetTemperatureIcon(item.ServingTemperature) me-1"></i>
+                                    @item.ServingTemperature
+                                </span>
+                            </div>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-clock me-2"></i>Prep Time</span>
+                                    <span>@item.PrepTime mins</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-glass-water me-2"></i>Servings</span>
+                                    <span>@item.Servings</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <div class="d-flex justify-content-between">
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-primary flex-grow-1 me-2">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-warning me-2">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                @* <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash-alt me-1"></i>Delete
+                                </a> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-glass-martini-alt fa-4x mb-4" style="color: var(--tomato);"></i>
+                <h3 class="mb-3">No drinks found</h3>
+                <p class="text-muted mb-4">Would you like to add your first drink recipe?</p>
+                <a asp-action="Create" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus-circle me-1"></i>Create Drink
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@functions {
+    string GetTemperatureBadgeClass(Drink.Temperature temp)
+    {
+        return temp switch
+        {
+            Drink.Temperature.Hot => "bg-danger",
+            Drink.Temperature.Cold => "bg-primary",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetTemperatureIcon(Drink.Temperature temp)
+    {
+        return temp switch
+        {
+            Drink.Temperature.Hot => "fas fa-temperature-high",
+            Drink.Temperature.Cold => "fas fa-temperature-low",
+            _ => "fas fa-thermometer-half"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .card-header {
+            border-bottom: none;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.35em 0.65em;
+            font-weight: 500;
+        }
+
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 0.75rem 0;
+        }
+
+        .list-group-item:first-child {
+            border-top: none;
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+}

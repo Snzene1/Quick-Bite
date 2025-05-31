@@ -1,0 +1,189 @@
+﻿@model Quick_Bite.Models.Drink
+
+@{
+    ViewData["Title"] = "Create New Drink";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 fw-bold" style="color: var(--eggplant);">
+            <i class="fas fa-glass-martini-alt me-2"></i>Create New Drink
+        </h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to List
+        </a>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+
+                <div class="row g-3">
+                    <!-- Drink Name -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input asp-for="RecipeName" class="form-control" placeholder="Drink name" />
+                            <label asp-for="RecipeName" class="control-label"></label>
+                            <span asp-validation-for="RecipeName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Drink Type and Temperature -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="DrinkCategory" class="form-select" asp-items="Html.GetEnumSelectList<Drink.DrinkType>()">
+                                <option value="">Select drink type</option>
+                            </select>
+                            <label asp-for="DrinkCategory" class="control-label"></label>
+                            <span asp-validation-for="DrinkCategory" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="ServingTemperature" class="form-select" asp-items="Html.GetEnumSelectList<Drink.Temperature>()">
+                                <option value="">Select serving temperature</option>
+                            </select>
+                            <label asp-for="ServingTemperature" class="control-label"></label>
+                            <span asp-validation-for="ServingTemperature" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Prep Time and Servings -->
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="PrepTime" class="form-control" placeholder="Prep time (minutes)" type="number" min="1" />
+                            <label asp-for="PrepTime" class="control-label"></label>
+                            <span asp-validation-for="PrepTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="Servings" class="form-control" placeholder="Servings" type="number" min="1" />
+                            <label asp-for="Servings" class="control-label"></label>
+                            <span asp-validation-for="Servings" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Alcohol Toggle -->
+                    <div class="col-md-6">
+                        <div class="form-check form-switch p-0">
+                            <div class="card h-100" id="alcoholCard">
+                                <div class="card-body d-flex align-items-center">
+                                    <input class="form-check-input me-3" type="checkbox" asp-for="IsAlcoholic" style="transform: scale(1.5);">
+                                    <label class="form-check-label fs-5" asp-for="IsAlcoholic" id="alcoholLabel">
+                                        🚫 Non-Alcoholic Drink
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ingredients -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Ingredients" class="form-control" placeholder="Ingredients"
+                                      style="height: 150px;"></textarea>
+                            <label asp-for="Ingredients" class="control-label"></label>
+                            <span asp-validation-for="Ingredients" class="text-danger small"></span>
+                            <small class="form-text text-muted">Enter each ingredient on a new line</small>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Instructions" class="form-control" placeholder="Instructions"
+                                      style="height: 200px;"></textarea>
+                            <label asp-for="Instructions" class="control-label"></label>
+                            <span asp-validation-for="Instructions" class="text-danger small"></span>
+                            <small class="form-text text-muted">Enter each step on a new line</small>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-12 mt-3">
+                        <button type="submit" class="btn btn-success btn-lg w-100 py-3">
+                            <i class="fas fa-plus-circle me-2"></i>Create Drink
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-floating textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--olive);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--tomato);
+            box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.25);
+        }
+
+        .alert-danger {
+            background-color: rgba(255, 99, 71, 0.1);
+            border-color: var(--tomato);
+            color: var(--tomato);
+        }
+
+        #alcoholCard {
+            border: 2px solid var(--basil);
+            transition: all 0.3s ease;
+        }
+
+        #alcoholCard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-check-input:checked ~ #alcoholCard {
+            border-color: var(--eggplant);
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Initialize floating labels
+        $(document).ready(function() {
+            $('.form-floating input, .form-floating textarea, .form-floating select').on('input change', function() {
+                if ($(this).val()) {
+                    $(this).addClass('has-value');
+                } else {
+                    $(this).removeClass('has-value');
+                }
+            }).trigger('change');
+
+            // Alcohol toggle interaction
+            $('#IsAlcoholic').change(function() {
+                const card = $('#alcoholCard');
+                const label = $('#alcoholLabel');
+                if (this.checked) {
+                    card.css('border-color', 'var(--eggplant)');
+                    label.html('🍺 Alcoholic Drink');
+                } else {
+                    card.css('border-color', 'var(--basil)');
+                    label.html('🚫 Non-Alcoholic Drink');
+                }
+            });
+        });
+    </script>
+}

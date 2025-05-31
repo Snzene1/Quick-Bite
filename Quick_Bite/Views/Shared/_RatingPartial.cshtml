@@ -1,0 +1,39 @@
+﻿@model (double AverageRating, int RatingCount, int ItemId, string ItemType)
+
+<div class="rating-container">
+    <div class="average-rating">
+        @if (Model.AverageRating > 0)
+        {
+            <span class="rating-stars">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <span class="star @(i <= Model.AverageRating ? "filled" : "")">★</span>
+                }
+            </span>
+            <span>(@Model.AverageRating.ToString("0.0") from @Model.RatingCount ratings)</span>
+        }
+        else
+        {
+            <span>Not rated yet</span>
+        }
+    </div>
+
+    <div class="rate-form">
+        <h5>Rate this @Model.ItemType:</h5>
+        <form asp-controller="Rating" asp-action="Rate@(Model.ItemType)" method="post">
+            <input type="hidden" name="@(Model.ItemType.ToLower() + "Id")" value="@Model.ItemId" />
+            
+            <div class="star-rating">
+                @for (int i = 5; i >= 1; i--)
+                {
+                    <input type="radio" id="star-@i-@Model.ItemId" name="value" value="@i" />
+                    <label for="star-@i-@Model.ItemId">★</label>
+                }
+            </div>
+            
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="fas fa-paper-plane me-1"></i>Submit Rating
+            </button>
+        </form>
+    </div>
+</div>

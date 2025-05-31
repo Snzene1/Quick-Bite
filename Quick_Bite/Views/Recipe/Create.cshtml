@@ -1,0 +1,182 @@
+﻿@model Quick_Bite.Models.Recipe
+
+@{
+    ViewData["Title"] = "Create New Recipe";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 fw-bold" style="color: var(--eggplant);">
+            <i class="fas fa-plus-circle me-2"></i>Create New Recipe
+        </h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to List
+        </a>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-4">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+
+                <div class="row g-3">
+                    <!-- Recipe Image Upload -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label">Recipe Image</label>
+                            <input type="file" name="imageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                            <small class="form-text text-muted">Upload a high-quality image of your recipe (JPG, PNG, GIF)</small>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Name -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input asp-for="RecipeName" class="form-control" placeholder="Recipe name" />
+                            <label asp-for="RecipeName" class="control-label"></label>
+                            <span asp-validation-for="RecipeName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Meal and Dietary Categories -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="MealCategory" class="form-select" asp-items="Html.GetEnumSelectList<Recipe.MealType>()">
+                                <option value="">Select meal type</option>
+                            </select>
+                            <label asp-for="MealCategory" class="control-label"></label>
+                            <span asp-validation-for="MealCategory" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="DietaryCategory" class="form-select" asp-items="Html.GetEnumSelectList<Recipe.Category>()">
+                                <option value="">Select dietary category</option>
+                            </select>
+                            <label asp-for="DietaryCategory" class="control-label"></label>
+                            <span asp-validation-for="DietaryCategory" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Prep and Cook Time -->
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="PrepTime" class="form-control" placeholder="Prep time (minutes)" type="number" min="1" />
+                            <label asp-for="PrepTime" class="control-label"></label>
+                            <span asp-validation-for="PrepTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="CookTime" class="form-control" placeholder="Cook time (minutes)" type="number" min="0" />
+                            <label asp-for="CookTime" class="control-label"></label>
+                            <span asp-validation-for="CookTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Servings and Date -->
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="Servings" class="form-control" placeholder="Servings" type="number" min="1" />
+                            <label asp-for="Servings" class="control-label"></label>
+                            <span asp-validation-for="Servings" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="DateAdded" class="form-control" placeholder="Date added" type="date" />
+                            <label asp-for="DateAdded" class="control-label"></label>
+                            <span asp-validation-for="DateAdded" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Ingredients -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Ingredients" class="form-control" placeholder="Ingredients"
+                                      style="height: 150px;"></textarea>
+                            <label asp-for="Ingredients" class="control-label"></label>
+                            <span asp-validation-for="Ingredients" class="text-danger small"></span>
+                            <small class="form-text text-muted">Enter each ingredient on a new line</small>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Instructions" class="form-control" placeholder="Instructions"
+                                      style="height: 200px;"></textarea>
+                            <label asp-for="Instructions" class="control-label"></label>
+                            <span asp-validation-for="Instructions" class="text-danger small"></span>
+                            <small class="form-text text-muted">Enter each step on a new line</small>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-12 mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                            <i class="fas fa-save me-2"></i>Create Recipe
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+            .form-floating textarea.form-control {
+                min-height: 120px;
+                resize: vertical;
+            }
+
+        .form-control, .form-select {
+            border: 1px solid var(--olive);
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: var(--tomato);
+                box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.25);
+            }
+
+        .alert-danger {
+            background-color: rgba(255, 99, 71, 0.1);
+            border-color: var(--tomato);
+            color: var(--tomato);
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Set default date to today
+        document.addEventListener('DOMContentLoaded', function () {
+            const dateField = document.getElementById('DateAdded');
+            if (dateField && !dateField.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateField.value = today;
+            }
+
+            // Initialize floating labels
+            $('.form-floating input, .form-floating textarea, .form-floating select').on('input change', function () {
+                if ($(this).val()) {
+                    $(this).addClass('has-value');
+                } else {
+                    $(this).removeClass('has-value');
+                }
+            }).trigger('change');
+        });
+    </script>
+}

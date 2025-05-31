@@ -1,0 +1,231 @@
+﻿@model Quick_Bite.Models.Drink
+
+@{
+    ViewData["Title"] = "Drink Details";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 fw-bold" style="color: var(--eggplant);">
+            <i class="fas fa-glass-martini-alt me-2"></i>@Model.RecipeName
+        </h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Edit
+            </a>
+            <form asp-controller="Download" asp-action="DownloadItem" method="post">
+                <input type="hidden" name="drinkId" value="@Model.Id" />
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-download me-1"></i>Download
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+
+
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header" style="background: linear-gradient(135deg, var(--basil), var(--olive)); color: white;">
+            <h5 class="mb-0">
+                <i class="fas fa-star me-2"></i>Ratings
+            </h5>
+        </div>
+        <div class="card-body">
+            @await Html.PartialAsync("_RatingPartial",
+                     (Model.AverageRating, Model.RatingCount, Model.Id, "Drink"))
+        </div>
+    </div>
+
+
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center"
+             style="background: linear-gradient(135deg, @(Model.IsAlcoholic ? "var(--eggplant)" : "var(--basil)"), @(Model.IsAlcoholic ? "var(--cinnamon)" : "var(--olive)")); color: white;">
+            <h5 class="mb-0">
+                <i class="fas fa-info-circle me-2"></i>Drink Information
+            </h5>
+            <span class="badge @(Model.IsAlcoholic ? "bg-warning text-dark" : "bg-light text-dark") fs-6">
+                @(Model.IsAlcoholic ? "🍺 Alcoholic" : "🚫 Non-Alcoholic")
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3" style="width: 140px;">
+                            <span class="badge rounded-pill w-100" style="background-color: var(--olive);">
+                                <i class="fas fa-tag me-1"></i>Drink Type
+                            </span>
+                        </div>
+                        <div class="fw-bold">@Model.DrinkCategory</div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3" style="width: 140px;">
+                            <span class="badge rounded-pill w-100 @GetTemperatureBadgeClass(Model.ServingTemperature)">
+                                <i class="@GetTemperatureIcon(Model.ServingTemperature) me-1"></i>Temperature
+                            </span>
+                        </div>
+                        <div class="fw-bold">@Model.ServingTemperature</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3" style="width: 140px;">
+                            <span class="badge rounded-pill w-100" style="background-color: var(--tomato);">
+                                <i class="fas fa-clock me-1"></i>Prep Time
+                            </span>
+                        </div>
+                        <div class="fw-bold">@Model.PrepTime minutes</div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <div class="me-3" style="width: 140px;">
+                            <span class="badge rounded-pill w-100" style="background-color: var(--cinnamon);">
+                                <i class="fas fa-glass-water me-1"></i>Servings
+                            </span>
+                        </div>
+                        <div class="fw-bold">@Model.Servings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card shadow border-0 h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--basil), var(--olive)); color: white;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-ul me-2"></i>Ingredients
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var ingredient in Model.Ingredients.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <li class="list-group-item d-flex">
+                                <i class="fas fa-check-circle me-2" style="color: var(--olive); margin-top: 3px;"></i>
+                                <span>@ingredient</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow border-0 h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--basil), var(--olive)); color: white;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-ol me-2"></i>Instructions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ol class="list-group list-group-numbered list-group-flush">
+                        @foreach (var instruction in Model.Instructions.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <li class="list-group-item d-flex align-items-start">
+                                <div class="ms-2 me-auto">@instruction</div>
+                            </li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetTemperatureBadgeClass(Drink.Temperature temp)
+    {
+        return temp switch
+        {
+            Drink.Temperature.Hot => "bg-danger",
+            Drink.Temperature.Cold => "bg-primary",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetTemperatureIcon(Drink.Temperature temp)
+    {
+        return temp switch
+        {
+            Drink.Temperature.Hot => "fas fa-temperature-high",
+            Drink.Temperature.Cold => "fas fa-temperature-low",
+            _ => "fas fa-thermometer-half"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .card-header {
+            border-bottom: none;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 1em;
+        }
+
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 0.75rem 1rem;
+        }
+
+            .list-group-item:first-child {
+                border-top: none;
+            }
+
+            .list-group-item:last-child {
+                border-bottom: none;
+            }
+
+        .list-group-numbered {
+            counter-reset: step-counter;
+        }
+
+            .list-group-numbered > li::before {
+                content: counter(step-counter);
+                counter-increment: step-counter;
+                font-weight: bold;
+                color: var(--tomato);
+                margin-right: 1rem;
+            }
+
+
+        /* Rating styles */
+        .rating-container {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        .average-rating {
+            margin-bottom: 1rem;
+        }
+
+        .rate-form {
+            margin-top: 1.5rem;
+        }
+
+        /* Spinner animation */
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: .25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+
+      
+    </style>
+}
