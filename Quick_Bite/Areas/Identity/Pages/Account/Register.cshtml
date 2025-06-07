@@ -1,23 +1,17 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Join QuickBite";
 }
-
-@* <div class="auth-hero-section">
-    <div class="auth-hero-content">
-        <h1 class="auth-hero-title">Join <span class="brand-name">QuickBite</span> Today</h1>
-        <p class="auth-hero-subtitle">Create your account to save favorite recipes and share your creations</p>
-    </div>
-</div> *@
 
 <div class="auth-container">
     <div class="auth-card">
-        <!-- Left Side - Register Form -->
+        <!-- Left Side - Registration Form -->
         <div class="auth-form-section">
             <div class="auth-header">
-                <h2>Create Account</h2>
-                <p class="text-muted">Join QuickBite today</p>
+                <img src="/images/recipes/quickbite-logo.jpg" alt="QuickBite Logo" class="auth-logo">
+                <h2>Create Your Account</h2>
+                <p class="auth-subtitle">Join our community of food enthusiasts</p>
             </div>
 
             <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="auth-form">
@@ -25,36 +19,80 @@
 
                 <!-- Email Field -->
                 <div class="form-group">
-                    <label asp-for="Input.Email" class="form-label">Email</label>
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter your email" />
+                    <label asp-for="Input.Email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input asp-for="Input.Email" class="form-control"
+                               autocomplete="username"
+                               aria-required="true"
+                               placeholder="your@email.com" />
+                    </div>
                     <span asp-validation-for="Input.Email" class="text-danger small"></span>
                 </div>
 
                 <!-- Password Field -->
                 <div class="form-group">
                     <label asp-for="Input.Password" class="form-label">Password</label>
-                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input asp-for="Input.Password" class="form-control"
+                               autocomplete="new-password"
+                               aria-required="true"
+                               placeholder="••••••••" />
+                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength mt-1">
+                        <div class="strength-meter">
+                            <div class="strength-bar"></div>
+                        </div>
+                        <small class="strength-feedback text-muted"></small>
+                    </div>
                     <span asp-validation-for="Input.Password" class="text-danger small"></span>
                 </div>
 
                 <!-- Confirm Password Field -->
                 <div class="form-group">
                     <label asp-for="Input.ConfirmPassword" class="form-label">Confirm Password</label>
-                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input asp-for="Input.ConfirmPassword" class="form-control"
+                               autocomplete="new-password"
+                               aria-required="true"
+                               placeholder="••••••••" />
+                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
                 </div>
 
+                <!-- Terms Agreement -->
+                <div class="form-group form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                    <label class="form-check-label" for="agreeTerms">
+                        I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                    </label>
+                </div>
+
                 <!-- Submit Button -->
-                <button id="registerSubmit" type="submit" class="btn btn-primary w-100 py-2 mb-3">
-                    <i class="fas fa-user-plus me-2"></i> Register
+                <button id="registerSubmit" type="submit" class="btn btn-primary w-100 py-3 mb-3">
+                    <i class="fas fa-user-plus me-2"></i> Create Account
                 </button>
 
                 <!-- Divider -->
                 <div class="divider">
-                    <span class="divider-text">or</span>
+                    <span class="divider-text">or sign up with</span>
                 </div>
 
-                <!-- Social Login (if configured) -->
+                <!-- Social Login -->
                 @if ((Model.ExternalLogins?.Count ?? 0) > 0)
                 {
                     <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -74,7 +112,7 @@
                 <!-- Login Link -->
                 <div class="text-center mt-4">
                     <span class="text-muted">Already have an account?</span>
-                    <a class="text-primary ms-2" asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">
+                    <a class="login-link" asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">
                         Sign in
                     </a>
                 </div>
@@ -82,11 +120,22 @@
         </div>
 
         <!-- Right Side - Branding/Image -->
-        <div class="auth-brand-section" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+        <div class="auth-brand-section" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+            <div class="brand-overlay"></div>
             <div class="brand-content">
-                <img src="/images/recipes/quickbite-logo.jpg" alt="QuickBite Logo" class="brand-logo">
-                <h3>Delicious Recipes Await</h3>
-                <p class="text-color">Create an account to save your favorite recipes and cooking history</p>
+                <h3>Unlock Culinary Delights</h3>
+                <p>Join thousands of food lovers sharing and discovering recipes</p>
+                <div class="benefits-list mt-4">
+                    <div class="benefit-item">
+                        <i class="fas fa-heart me-2"></i> Save favorite recipes
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-utensils me-2"></i> Create your own cookbook
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-users me-2"></i> Join our community
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -94,67 +143,197 @@
 
 @section Styles {
     <style>
-
-        .text-color{
-            color: azure;
+        :root {
+            --tomato: #ff6347;
+            --basil: #3a5f0b;
+            --eggplant: #614051;
+            --olive: #808000;
+            --cream: #fffdd0;
+            --cinnamon: #d2691e;
         }
 
-        /* Add the same styles from your Login.cshtml here */
         .auth-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 20px;
-            background-color: #f8f9fa;
-            /* Remove margin-top adjustment */
+            justify-content: center;
+            padding: 2rem;
+            background-color: var(--cream);
         }
 
         .auth-card {
             display: flex;
             max-width: 1000px;
+            width: 100%;
             margin: 0 auto;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .auth-form-section {
-            padding: 3rem;
+            padding: 3rem 2.5rem;
             flex: 1;
+            max-width: 500px;
         }
 
         .auth-brand-section {
             flex: 1;
-            /* Remove the gradient background */
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            position: relative;
         }
 
-        .brand-logo {
-            max-width: 150px;
-            margin-bottom: 2rem;
+        .brand-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(58, 95, 11, 0.85), rgba(97, 64, 81, 0.85));
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 80%;
+        }
+
+            .brand-content h3 {
+                font-size: 1.75rem;
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            .brand-content p {
+                font-size: 1rem;
+                opacity: 0.9;
+            }
+
+        .auth-logo {
+            max-width: 120px;
+            margin-bottom: 1.5rem;
         }
 
         .auth-header {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             text-align: center;
         }
 
-        .auth-form .form-group {
-            margin-bottom: 1.5rem;
+            .auth-header h2 {
+                color: var(--basil);
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+            }
+
+        .auth-subtitle {
+            color: var(--eggplant);
+            opacity: 0.8;
         }
+
+        .auth-form .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--eggplant);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 0.25rem;
+        }
+
+        .input-group-text {
+            background-color: white;
+            border-right: none;
+            color: var(--tomato);
+        }
+
+        .form-control {
+            border-left: none;
+            padding: 0.75rem 1rem;
+            border-color: #ced4da;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus {
+                box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.25);
+                border-color: var(--tomato);
+            }
+
+        .toggle-password {
+            border-left: none;
+            background-color: white;
+            color: var(--eggplant);
+        }
+
+            .toggle-password:hover {
+                color: var(--tomato);
+            }
+
+        .password-strength {
+            width: 100%;
+        }
+
+        .strength-meter {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-bottom: 0.25rem;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            background: #dc3545;
+            transition: all 0.3s ease;
+        }
+
+        .strength-feedback {
+            display: block;
+            font-size: 0.75rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--tomato);
+            border-color: var(--tomato);
+        }
+
+        .form-check-label {
+            color: var(--eggplant);
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: var(--tomato);
+            border-color: var(--tomato);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #e5533d;
+                border-color: #e5533d;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
+            }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 1.5rem 0;
+            margin: 1.75rem 0;
         }
 
             .divider::before, .divider::after {
@@ -166,6 +345,9 @@
         .divider-text {
             padding: 0 1rem;
             color: #6c757d;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .social-login {
@@ -179,10 +361,118 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .social-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+        .login-link {
+            color: var(--tomato);
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .login-link:hover {
+                color: var(--basil);
+                text-decoration: underline;
+            }
+
+        .benefits-list {
+            text-align: left;
+            margin-top: 1.5rem;
+        }
+
+        .benefit-item {
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+            .benefit-item i {
+                color: var(--tomato);
+                width: 20px;
+                text-align: center;
+            }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .auth-card {
+                flex-direction: column;
+            }
+
+            .auth-brand-section {
+                display: none;
+            }
+
+            .auth-form-section {
+                padding: 2rem 1.5rem;
+                max-width: 100%;
+            }
         }
     </style>
 }
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            const toggleButtons = document.querySelectorAll('.toggle-password');
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.closest('.input-group').querySelector('input');
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                    this.querySelector('i').classList.toggle('fa-eye');
+                });
+            });
+
+            // Password strength meter
+            const passwordInput = document.querySelector('#Input_Password');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const strengthBar = document.querySelector('.strength-bar');
+                    const strengthFeedback = document.querySelector('.strength-feedback');
+                    const password = this.value;
+                    let strength = 0;
+
+                    // Length check
+                    if (password.length > 0) strength += 20;
+                    if (password.length >= 8) strength += 20;
+
+                    // Complexity checks
+                    if (password.match(/[a-z]/)) strength += 10;
+                    if (password.match(/[A-Z]/)) strength += 10;
+                    if (password.match(/[0-9]/)) strength += 20;
+                    if (password.match(/[^a-zA-Z0-9]/)) strength += 20;
+
+                    // Update UI
+                    strengthBar.style.width = strength + '%';
+
+                    if (strength < 40) {
+                        strengthBar.style.backgroundColor = '#dc3545';
+                        strengthFeedback.textContent = 'Weak password';
+                        strengthFeedback.style.color = '#dc3545';
+                    } else if (strength < 70) {
+                        strengthBar.style.backgroundColor = '#fd7e14';
+                        strengthFeedback.textContent = 'Moderate password';
+                        strengthFeedback.style.color = '#fd7e14';
+                    } else {
+                        strengthBar.style.backgroundColor = '#28a745';
+                        strengthFeedback.textContent = 'Strong password';
+                        strengthFeedback.style.color = '#28a745';
+                    }
+                });
+            }
+        });
+    </script>
 }

@@ -2,6 +2,18 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
+@functions {
+    private bool IsAuthPage()
+    {
+        var path = Context.Request.Path.Value;
+        return path != null && (
+            path.StartsWith("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/Identity/Account/Logout", StringComparison.OrdinalIgnoreCase)
+        );
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -273,10 +285,9 @@
                         font-size: 1.25rem;
                     }
 
-            .main-content {
-                margin-left: 70px;
-                width: calc(100% - 70px);
-                padding: 1rem;
+            .main-content.w-100 {
+                margin-left: 0 !important;
+                width: 100% !important;
             }
 
             .sidebar-toggle {
@@ -345,7 +356,11 @@
 </head>
 <body>
     <!-- Sidebar -->
+    @if (!IsAuthPage())
+    {
+
     <div class="sidebar d-flex flex-column" id="sidebar">
+
         <div class="sidebar-header d-flex justify-content-between align-items-center mb-4">
             <img src="/images/recipes/quickbite-logo.jpg" alt="QuickBite Logo" class="brand-logo">
             <button class="btn btn-sm btn-toggle" id="sidebarToggle">
@@ -377,9 +392,11 @@
             </a>
         </nav>
     </div>
+    }
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content @(IsAuthPage() ? "w-100" : "")">
+
         <!-- Top Navigation Bar -->
         <div class="top-navigation">
             <partial name="_LoginPartial" />
@@ -433,16 +450,16 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const sidebar = document.getElementById('sidebar');
-            const toggleBtn = document.getElementById('sidebarToggle');
-
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        
+        // Only initialize sidebar toggle if sidebar exists (not on auth pages)
+        if (sidebar && toggleBtn) {
             // Toggle sidebar
             toggleBtn.addEventListener('click', function () {
                 sidebar.classList.toggle('collapsed');
-
-                // Save state to localStorage
                 localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
             });
 
@@ -468,8 +485,9 @@
 
             // Update on resize
             window.addEventListener('resize', handleResize);
-        });
-    </script>
+        }
+    });
+</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

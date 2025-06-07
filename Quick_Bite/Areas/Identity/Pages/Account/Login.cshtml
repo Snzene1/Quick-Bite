@@ -2,19 +2,17 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Welcome Back";
+    ViewData["Title"] = "Welcome Back to QuickBite";
 }
-
-
-
 
 <div class="auth-container">
     <div class="auth-card">
         <!-- Left Side - Login Form -->
         <div class="auth-form-section">
             <div class="auth-header">
-                <h2>Sign In</h2>
-                <p class="text-muted">Access your QuickBite account</p>
+                <img src="/images/recipes/quickbite-logo.jpg" alt="QuickBite Logo" class="auth-logo">
+                <h2>Welcome Back!</h2>
+                <p class="auth-subtitle">Sign in to access your recipes and cooking history</p>
             </div>
 
             <form id="account" method="post" class="auth-form">
@@ -23,18 +21,31 @@
                 <!-- Email Field -->
                 <div class="form-group">
                     <label asp-for="Input.Email" class="form-label">Email Address</label>
-                    <input asp-for="Input.Email" class="form-control"
-                           autocomplete="username"
-                           placeholder="Enter your email" />
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input asp-for="Input.Email" class="form-control"
+                               autocomplete="username"
+                               placeholder="your@email.com" />
+                    </div>
                     <span asp-validation-for="Input.Email" class="text-danger small"></span>
                 </div>
 
                 <!-- Password Field -->
                 <div class="form-group">
                     <label asp-for="Input.Password" class="form-label">Password</label>
-                    <input asp-for="Input.Password" class="form-control"
-                           autocomplete="current-password"
-                           placeholder="••••••••" />
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input asp-for="Input.Password" class="form-control"
+                               autocomplete="current-password"
+                               placeholder="••••••••" />
+                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <span asp-validation-for="Input.Password" class="text-danger small"></span>
                 </div>
 
@@ -46,19 +57,19 @@
                             Remember me
                         </label>
                     </div>
-                    <a class="text-primary small" id="forgot-password" asp-page="./ForgotPassword">
+                    <a class="forgot-password" id="forgot-password" asp-page="./ForgotPassword">
                         Forgot password?
                     </a>
                 </div>
 
                 <!-- Submit Button -->
-                <button id="login-submit" type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                <button id="login-submit" type="submit" class="btn btn-primary w-100 py-3 mb-3">
                     <i class="fas fa-sign-in-alt me-2"></i> Sign In
                 </button>
 
                 <!-- Divider -->
                 <div class="divider">
-                    <span class="divider-text">or</span>
+                    <span class="divider-text">or continue with</span>
                 </div>
 
                 <!-- Social Login (if configured) -->
@@ -81,7 +92,7 @@
                 <!-- Register Link -->
                 <div class="text-center mt-4">
                     <span class="text-muted">Don't have an account?</span>
-                    <a class="text-primary ms-2" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
+                    <a class="register-link" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
                         Create one
                     </a>
                 </div>
@@ -89,11 +100,11 @@
         </div>
 
         <!-- Right Side - Branding/Image -->
-        <div class="auth-brand-section" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+        <div class="auth-brand-section" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+            <div class="brand-overlay"></div>
             <div class="brand-content">
-                <img src="/images/recipes/quickbite-logo.jpg" alt="QuickBite Logo" class="brand-logo">
                 <h3>Delicious Recipes Await</h3>
-                <p class="text-color">Sign in to access your saved recipes and cooking history</p>
+                <p>Sign in to access your saved recipes and personalized recommendations</p>
             </div>
         </div>
     </div>
@@ -101,75 +112,198 @@
 
 @section Styles {
     <style>
-        .text-color{
-            color: azure;
+        :root {
+            --tomato: #ff6347;
+            --basil: #3a5f0b;
+            --eggplant: #614051;
+            --olive: #808000;
+            --cream: #fffdd0;
+            --cinnamon: #d2691e;
         }
 
         .auth-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 20px;
-            background-color: #f8f9fa;
-            /* Remove margin-top adjustment */
+            justify-content: center;
+            padding: 2rem;
+            background-color: var(--cream);
         }
 
         .auth-card {
             display: flex;
             max-width: 1000px;
+            width: 100%;
             margin: 0 auto;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .auth-form-section {
-            padding: 3rem;
+            padding: 3rem 2.5rem;
             flex: 1;
+            max-width: 500px;
         }
 
         .auth-brand-section {
             flex: 1;
-            /* Remove the gradient background */
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            position: relative;
         }
-        .brand-logo {
-            max-width: 150px;
-            margin-bottom: 2rem;
+
+        .brand-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(58, 95, 11, 0.8), rgba(129, 97, 81, 0.8));
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 80%;
+        }
+
+            .brand-content h3 {
+                font-size: 1.75rem;
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            .brand-content p {
+                font-size: 1rem;
+                opacity: 0.9;
+            }
+
+        .auth-logo {
+            max-width: 120px;
+            margin-bottom: 1.5rem;
         }
 
         .auth-header {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             text-align: center;
         }
 
-        .auth-form .form-group {
-            margin-bottom: 1.5rem;
+            .auth-header h2 {
+                color: var(--basil);
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+            }
+
+        .auth-subtitle {
+            color: var(--eggplant);
+            opacity: 0.8;
         }
+
+        .auth-form .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--eggplant);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 0.25rem;
+        }
+
+        .input-group-text {
+            background-color: white;
+            border-right: none;
+            color: var(--tomato);
+        }
+
+        .form-control {
+            border-left: none;
+            padding: 0.75rem 1rem;
+            border-color: #ced4da;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus {
+                box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.25);
+                border-color: var(--tomato);
+            }
+
+        .toggle-password {
+            border-left: none;
+            background-color: white;
+            color: var(--eggplant);
+        }
+
+            .toggle-password:hover {
+                color: var(--tomato);
+            }
+
+        .form-check-input:checked {
+            background-color: var(--tomato);
+            border-color: var(--tomato);
+        }
+
+        .form-check-label {
+            color: var(--eggplant);
+        }
+
+        .forgot-password {
+            color: var(--tomato);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+            .forgot-password:hover {
+                color: var(--basil);
+                text-decoration: underline;
+            }
+
+        .btn-primary {
+            background-color: var(--tomato);
+            border-color: var(--tomato);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #e5533d;
+                border-color: #e5533d;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
+            }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 1.5rem 0;
+            margin: 1.75rem 0;
         }
 
-        .divider::before, .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid #dee2e6;
-        }
+            .divider::before, .divider::after {
+                content: "";
+                flex: 1;
+                border-bottom: 1px solid #dee2e6;
+            }
 
         .divider-text {
             padding: 0 1rem;
             color: #6c757d;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .social-login {
@@ -183,10 +317,64 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .social-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+        .register-link {
+            color: var(--tomato);
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .register-link:hover {
+                color: var(--basil);
+                text-decoration: underline;
+            }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .auth-card {
+                flex-direction: column;
+            }
+
+            .auth-brand-section {
+                display: none;
+            }
+
+            .auth-form-section {
+                padding: 2rem 1.5rem;
+                max-width: 100%;
+            }
         }
     </style>
 }
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            const togglePassword = document.querySelector('.toggle-password');
+            const password = document.querySelector('#Input_Password');
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                    this.querySelector('i').classList.toggle('fa-eye');
+                });
+            }
+        });
+    </script>
 }
